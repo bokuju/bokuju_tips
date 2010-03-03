@@ -48,10 +48,39 @@ class Otenki(object):
 
     def print_otenki(self):
         _td_dom = self.get_today_dom()
+        _td_rain_info = self.get_rain_info(_td_dom)
         _tm_dom = self.get_tomorrow_dom()
-        print self.get_plain_text(_td_dom)
-        #print self.get_plain_text(_tm_dom)
+        _tm_rain_info = self.get_rain_info(_tm_dom)
+
+        print "-"*12
+        print "[今日]"
+        self.print_rain_info(_td_rain_info)
+
+        print "-"*12
+
+        print "[明日]"
+        self.print_rain_info(_tm_rain_info)
+        print "-"*12
+
         return True
+
+    def print_rain_info(self, rain_info):
+        print "- %s -" % "降水確率"
+        for _n in range(len(rain_info)):
+            print "%(time)5s : %(probability)3s" % rain_info[_n]
+        return True
+
+    def get_rain_info(self, dom):
+        _r_dom = dom.findAll("tr")[0].findAll("table")[2].findAll("tr")
+        _r_time = _r_dom[1].findAll("td")
+        _r_probability = _r_dom[0].findAll("td")
+        _r_info = range(4)
+        for _n in range(4):
+            _r_info[_n] = { 
+                "time":self.get_plain_text(_r_time[_n + 1]), 
+                "probability":self.get_plain_text(_r_probability[_n + 1])
+                }
+        return _r_info
 
     def get_plain_text(self, dom):
         text = ''.join([ s.string if s.string else self.get_plain_text(s) for s in dom ])
