@@ -26,12 +26,12 @@ class Otenki(object):
     def get_soup_dom(self, uri):
         source = urllib.urlopen(uri).read()
         try:
-            # BeautifulSoupでパース
-            soup = BeautifulSoup.BeautifulSoup(source)
-        except:
-            # エラーが発生したらhtml5libでパース
             parser = html5lib.HTMLParser(tree=treebuilders.getTreeBuilder("beautifulsoup"))
             soup = parser.parse(source)
+            # BeautifulSoupでパース
+        except:
+            # エラーが発生したらhtml5libでパース
+            soup = BeautifulSoup.BeautifulSoup(source)
         return soup
 
     def get_comment(self, text):
@@ -49,12 +49,12 @@ class Otenki(object):
     def print_otenki(self):
         _td_dom = self.get_today_dom()
         _td_weather_info = self.get_weather_info(_td_dom)
-        #_td_temp_info = self.get_temp_info(_td_dom)
+        _td_temp_info = self.get_temp_info(_td_dom)
         _td_rain_info = self.get_rain_info(_td_dom)
         _td_nature_info = self.get_nature_info(_td_dom)
 
         self.print_weather_info(_td_weather_info)
-        #self.print_temp_info(_td_temp_info)
+        self.print_temp_info(_td_temp_info)
         self.print_rain_info(_td_rain_info)
         self.print_nature_info(_td_nature_info)
 
@@ -112,10 +112,9 @@ class Otenki(object):
         _t_dom = dom.find("tr").findAll("table")[1].findAll("td")
         _t_high_dom = _t_dom[0]
         _t_low_dom = _t_dom[1]
-        #import pdb;pdb.set_trace()
         _t_info = {
-            "high":self.get_plain_text(_t_high_dom),
-            "low":self.get_plain_text(_t_low_dom),
+            "high":_t_high_dom.small.font.contents[2].replace("\n", ""),
+            "low":_t_low_dom.small.font.contents[2].replace("\n", "")
             }
         return _t_info
 
