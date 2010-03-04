@@ -142,7 +142,6 @@ class Otenki(object):
         return _n_info
 
     def get_plain_text(self, dom):
-        #text = ''.join([ s.string if s.string else self.get_plain_text(s) for s in dom ])
         text_list = []
         for _d in dom:
             if _d.string:
