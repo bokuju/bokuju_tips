@@ -83,7 +83,14 @@ class Otenki(object):
         return _r_info
 
     def get_plain_text(self, dom):
-        text = ''.join([ s.string if s.string else self.get_plain_text(s) for s in dom ])
+        #text = ''.join([ s.string if s.string else self.get_plain_text(s) for s in dom ])
+        text_list = []
+        for _d in dom:
+            if _d.string:
+                text_list.append(_d.string)    
+            else:
+                self.get_plain_text(_d)
+        text = ''.join(text_list)
         ctug = re.compile('<!--.*?-->',re.DOTALL)
         text = ctug.sub('', text)
         return text
