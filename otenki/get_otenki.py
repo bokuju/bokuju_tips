@@ -48,30 +48,79 @@ class Otenki(object):
 
     def print_otenki(self):
         _td_dom = self.get_today_dom()
+        _td_weather_info = self.get_weather_info(_td_dom)
+        #_td_temp_info = self.get_temp_info(_td_dom)
         _td_rain_info = self.get_rain_info(_td_dom)
-        _tm_dom = self.get_tomorrow_dom()
-        _tm_rain_info = self.get_rain_info(_tm_dom)
+        _td_nature_info = self.get_nature_info(_td_dom)
 
-        print "-"*12
-        print "[今日]"
+        self.print_weather_info(_td_weather_info)
+        #self.print_temp_info(_td_temp_info)
         self.print_rain_info(_td_rain_info)
+        self.print_nature_info(_td_nature_info)
 
+        """
         print "-"*12
 
-        print "[明日]"
+        _tm_dom = self.get_tomorrow_dom()
+        _tm_weather_info = self.get_weather_info(_td_dom)
+        #_tm_temp_info = self.get_temp_info(_tm_dom)
+        _tm_rain_info = self.get_rain_info(_tm_dom)
+        _tm_nature_info = self.get_nature_info(_tm_dom)
+
+        self.print_weather_info(_tm_weather_info)
+        #self.print_temp_info(_tm_temp_info)
         self.print_rain_info(_tm_rain_info)
-        print "-"*12
+        self.print_nature_info(_tm_nature_info)
+        """
 
+        return True
+
+    def print_weather_info(self, weather_info):
+        print "- %s -" % "天気"
+        print "%s : %s" % (weather_info["date"], weather_info["status"])
+        return True
+
+    def print_temp_info(self, temp_info):
+        print "- %s -" % "気温"
+        print u"最高 : %s" % (temp_info["high"])
+        print u"最低 : %s" % (temp_info["low"])
         return True
 
     def print_rain_info(self, rain_info):
         print "- %s -" % "降水確率"
         for _n in range(len(rain_info)):
-            print "%(time)5s : %(probability)3s" % rain_info[_n]
+            print "%(time)-5s : %(probability)-3s" % rain_info[_n]
         return True
 
+    def print_nature_info(self, nature_info):
+        print "- %s -" % "その他"
+        print u"風 : %s" % (nature_info["wind"])
+        print u"波 : %s" % (nature_info["wave"])
+        return True
+
+    def get_weather_info(self, dom):
+        _w_dom = dom.find("tr").findAll("table")[0].findAll("td")
+        _w_date_dom = _w_dom[0]
+        _w_status_dom = _w_dom[1]
+        _w_info = {
+            "date":self.get_plain_text(_w_date_dom),
+            "status":self.get_plain_text(_w_status_dom),
+            }
+        return _w_info
+
+    def get_temp_info(self, dom):
+        _t_dom = dom.find("tr").findAll("table")[1].findAll("td")
+        _t_high_dom = _t_dom[0]
+        _t_low_dom = _t_dom[1]
+        #import pdb;pdb.set_trace()
+        _t_info = {
+            "high":self.get_plain_text(_t_high_dom),
+            "low":self.get_plain_text(_t_low_dom),
+            }
+        return _t_info
+
     def get_rain_info(self, dom):
-        _r_dom = dom.findAll("tr")[0].findAll("table")[2].findAll("tr")
+        _r_dom = dom.find("tr").findAll("table")[2].findAll("tr")
         _r_time = _r_dom[1].findAll("td")
         _r_probability = _r_dom[0].findAll("td")
         _r_info = range(4)
@@ -82,12 +131,23 @@ class Otenki(object):
                 }
         return _r_info
 
+    def get_nature_info(self, dom):
+        _n_dom = dom.find("tr").findAll("table")[3].findAll("td")
+        _n_wind_dom = _n_dom[1]
+        _n_wave_dom = _n_dom[3]
+        _n_info = {
+            "wind":self.get_plain_text(_n_wind_dom),
+            "wave":self.get_plain_text(_n_wave_dom),
+            }
+        return _n_info
+
     def get_plain_text(self, dom):
         #text = ''.join([ s.string if s.string else self.get_plain_text(s) for s in dom ])
         text_list = []
         for _d in dom:
             if _d.string:
-                text_list.append(_d.string)    
+                if _d.string != "\n":
+                    text_list.append(_d.string.strip())    
             else:
                 self.get_plain_text(_d)
         text = ''.join(text_list)
