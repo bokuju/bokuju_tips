@@ -16,6 +16,7 @@ domainname="$(get_domainname $(hostname))"
 ###
 # Main
 #
+# TODO: バックアップ、基本設定、SMTP−Auth、受信メールサイズ制限を別のプログラムにする
 backup ${backup_files}
 
 # 基本設定
@@ -36,8 +37,14 @@ set_main_cf 'home_mailbox' 'Maildir\/'
 set_main_cf 'smtpd_banner' "${new_myhostname} ESMTP unknown"
 
 # SMTP-Auth
+set_main_cf 'smtpd_sasl_auth_enable' 'yes'
+
+set_main_cf 'smtpd_sasl_local_domain' "${new_myhostname}"
+
+set_main_cf 'smtpd_repicipent_restrictions' 'permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination'
 
 # 受信メールサイズ制限
+set_main_cf 'message_size_limit' '10485760'
 
 if [ ${ret} -eq 0 ]; then
     remove_backup ${backup_files} 
