@@ -1,10 +1,14 @@
 #!/bin/bash
 
 ###
+# メールの初期設定をするスクリプト
+#
+
+###
 # Including
 #
-if [ -f $(pwd $0)/.postfix.sh ]; then
-    source $(pwd $0)/.postfix.sh
+if [ -f $(pwd $0)/.mail_util.sh ]; then
+    source $(pwd $0)/.mail_util.sh
 fi
 
 ###
