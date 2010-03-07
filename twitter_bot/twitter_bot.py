@@ -17,29 +17,29 @@ class Bot(object):
         """
         コンストラクタ
         """
-        self.__username = username
-        self.__password = password
-        self.__api = twitter.Api(username=self.__username, password=self.__password)
+        self._username = username
+        self._password = password
+        self._api = twitter.Api(username=self._username, password=self._password)
 
     def get_follwing_timeline(self):
         """
         フォローされているユーザーのタイムラインを取得する
         """
-        _tweetes = self.__api.GetFriendsTimeline()
+        _tweetes = self._api.GetFriendsTimeline()
         return _tweetes
 
     def get_replies(self):
         """
         リプライ（自分宛のツイート）を取得する
         """
-        _tweetes = sefl.__api.GetReplies()
+        _tweetes = sefl._api.GetReplies()
         return _tweetes
 
     def post_tweet(self, text):
         """
         ツイートする
         """
-        _tweet = self.__api.PostUpdate(text)
+        _tweet = self._api.PostUpdate(text)
         print "tweet (%s) at (%s)" % (_tweet.text, _tweet.created_at)
 
         return _tweet
@@ -58,14 +58,14 @@ class Bot(object):
         """
         フォローされているユーザーを取得する
         """
-        _users = self.__api.GetFriends()
+        _users = self._api.GetFriends()
         return _users
 
     def get_follower(self):
         """
         フォローしているユーザーを取得する
         """
-        _users = self.__api.GetFollowers()
+        _users = self._api.GetFollowers()
         return _users
 
     def post_follow(self, username):
@@ -73,7 +73,7 @@ class Bot(object):
         フォローする
         """
         #TODO フォローしているかチェック
-        _user = self.__api.CreateFriendship(username)
+        _user = self._api.CreateFriendship(username)
         print "follow (%s)" % (_user.screen_name)
         return _user
 
@@ -82,7 +82,7 @@ class Bot(object):
         フォローを解除する
         """
         #TODO フォローしていないかチェック
-        _user = self.__api.DestroyFriendship(username)
+        _user = self._api.DestroyFriendship(username)
         print "un follow (%s)" % (_user.screen_name)
         return _user
 

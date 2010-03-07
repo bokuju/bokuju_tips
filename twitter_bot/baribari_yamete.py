@@ -35,7 +35,7 @@ class BaribariYameteBot(twitter_bot.Bot):
         if tweet.is_my() == true:
         とかしたいんだけど
         """
-        if tweet.user.screen_name == self.__username:
+        if tweet.user.screen_name == self._username:
             return True
         else:
             return False
