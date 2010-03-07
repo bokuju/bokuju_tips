@@ -16,6 +16,7 @@ fi
 #
 main_cf="/etc/postfix/main.cf"
 master_cf="/etc/postfix/master.cf"
+smtpd_conf="/usr/lib/sasl2/smtpd.conf"
 backup_files=`cat<<_EOT_
 ${main_cf}
 ${master_cf}
@@ -56,6 +57,41 @@ function set_main_cf(){
     local _ret=0
 
     set_key_eq_value "${main_cf}" "${_key}" "${_value}"
+    _ret=$?
+
+    return ${_ret}
+}
+
+# /usr/lib/sasl2/smtpd.conf
+function check_smtpd_conf(){
+    # main.cfに設定があるかチェックする
+    local _key=$1
+    local _ret=0
+
+    check_key_col_value "${smtpd_conf}" "${_key}"
+    _ret=$?
+
+    return ${_ret}
+}
+
+function get_smtpd_conf(){
+    # main.cfの設定を取得する
+    local _key=$1
+    local _ret=0
+
+    get_key_col_value "${smtpd_conf}" "${_key}"
+    _ret=$?
+
+    return ${_ret}
+}
+
+function set_smtpd_conf(){
+    # main.cfの設定を追加／編集する
+    local _key=$1
+    local _value=$2
+    local _ret=0
+
+    set_key_col_value "${smtpd_conf}" "${_key}" "${_value}"
     _ret=$?
 
     return ${_ret}
