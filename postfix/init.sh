@@ -56,10 +56,12 @@ if [ ${ret} -eq 0 ]; then
     stop_daemon 'sendmail'
 
     set_auto_start 'saslauthd' 'on'
+    stop_daemon 'saslauthd'
     start_daemon 'saslauthd'
     make_Maildir
 
     set_auto_start 'postfix' 'on'
+    stop_daemon 'postfix'
     start_daemon 'postfix'
     set_mta_is_postfix
 else

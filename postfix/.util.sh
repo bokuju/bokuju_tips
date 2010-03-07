@@ -130,9 +130,9 @@ function start_daemon(){
         /etc/init.d/${_daemon} start > /dev/null
         _ret=$?
         if [ ${_ret} -eq 0 ]; then
-            log "${_daemon} ${_action} ... ok"
+            log "${_daemon} start ... ok"
         else
-            error "${_daemon} ${_action} ... faild"
+            error "${_daemon} start ... failed"
         fi
     fi
 
@@ -152,7 +152,7 @@ function stop_daemon(){
         if [ ${_ret} -eq 0 ]; then
             log "${_daemon} stop ... ok"
         else
-            error "${_daemon} stop ... faild"
+            error "${_daemon} stop ... failed"
         fi
     fi
 
