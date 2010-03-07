@@ -21,7 +21,7 @@ domainname="$(get_domainname $(hostname))"
 # TODO: 返り値の処理
 backup ${backup_files}
 
-# 基本設定
+# postfix基本設定
 set_main_cf 'myhostname' "mail.${domainname}"
 new_myhostname="$(get_main_cf 'myhostname')"
 
@@ -34,7 +34,7 @@ set_main_cf 'inet_interfaces' 'all'
 
 set_main_cf 'mydestination' "${new_myhostname}, localhost.${new_mydomain}, localhost, ${new_mydomain}"
 
-set_main_cf 'home_mailbox' 'Maildir\/'
+set_main_cf 'home_mailbox' 'Maildir\/' #TODO: escape
 
 set_main_cf 'smtpd_banner' "${new_myhostname} ESMTP unknown"
 
@@ -50,6 +50,15 @@ set_smtpd_conf 'pwcheck_method' 'saslauthd'
 # 受信メールサイズ制限
 set_main_cf 'message_size_limit' '10485760'
 
+# dovecot基本設定
+set_dovecot_conf 'protocols' 'imap imaps pop3 pop3s'
+
+set_dovecot_conf 'mail_location' 'maildir\:\~\/Maildir' #TODO: escape
+
+#set_dovecot 'default_mail_env' 'maildir:~/Maildir'
+
+#set_dovecot 'valid_chroot_dirs' '/home'
+
 if [ ${ret} -eq 0 ]; then
     remove_backup ${backup_files} 
     set_auto_start 'sendmail' 'off'
@@ -64,6 +73,10 @@ if [ ${ret} -eq 0 ]; then
     stop_daemon 'postfix'
     start_daemon 'postfix'
     set_mta_is_postfix
+
+    set_auto_start 'dovecot' 'on'
+    stop_daemon 'dovecot'
+    start_daemon 'dovecot'
 else
     restore ${backup_files}
 fi
