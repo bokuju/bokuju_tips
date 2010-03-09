@@ -29,6 +29,21 @@ class BaribariYameteBot(twitter_bot.Bot):
 
         return False
 
+    def tweet_search_makasero(self, text):
+        _strings = (
+            u"俺に任せろ",
+            u"俺にまかせろ",
+            u"おれに任せろ",
+            u"オレに任せろ",
+            u"おれにまかせろ"
+        )
+
+        for s in _strings: 
+            if re.compile(s, re.MULTILINE).search(text):
+                return True
+
+        return False
+
     def tweet_is_my_tweet(self, tweet):
         """
         TODO
@@ -48,7 +63,7 @@ class BaribariYameteBot(twitter_bot.Bot):
         """
         _create_time = tweet.created_at_in_seconds
         _now = int(time.time())
-        if (N* 60) >= (_now - _create_time):
+        if (N * 60) >= (_now - _create_time):
             return True
         else:
             return False
@@ -65,6 +80,8 @@ if __name__ == '__main__':
     tweetes = bot.get_follwing_timeline()
     for tweet in tweetes:
         #TODO 時間で重複を防いでいるが、もっとウマいやり方あると思う
-        #if is_my_tweet(tweet) is False and search_baribari(tweet.text) is True:
-        if bot.tweet_is_my_tweet(tweet) is False and bot.tweet_in_N_minites(tweet) is True and bot.tweet_search_baribari(tweet.text) is True:
-            my_tweet = bot.post_retweet(u"やめて！", tweet)
+        if bot.tweet_is_my_tweet(tweet) is False and bot.tweet_in_N_minites(tweet) is True:
+            if bot.tweet_search_baribari(tweet.text) is True:
+                my_tweet = bot.post_retweet(u"やめて！", tweet)
+            elif bot.tweet_search_makasero(tweet.text) is True:
+                my_tweet = bot.post_retweet(u"バリバリ(ﾟωﾟ)", tweet)
