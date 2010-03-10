@@ -21,6 +21,7 @@ class Otenki(object):
     def get_uri(self):
         _today = self.get_today()
         _url="http://rd.yahoo.co.jp/rss/l/weather/days/*http://weather.yahoo.co.jp/weather/jp/13/4410.html?d=" + _today
+        #print _url
         return _url
 
     def get_soup_dom(self, uri):
@@ -46,7 +47,7 @@ class Otenki(object):
         _comment = self.get_comment("Tomorrow")
         return _comment.findNextSiblings()[1]
 
-    def print_otenki(self):
+    def print_otenki(self, tomorrow=False):
         _td_dom = self.get_today_dom()
         _td_weather_info = self.get_weather_info(_td_dom)
         _td_temp_info = self.get_temp_info(_td_dom)
@@ -58,20 +59,19 @@ class Otenki(object):
         self.print_rain_info(_td_rain_info)
         self.print_nature_info(_td_nature_info)
 
-        """
-        print "-"*12
+        if tomorrow == True:
+            print "-"*12
 
-        _tm_dom = self.get_tomorrow_dom()
-        _tm_weather_info = self.get_weather_info(_td_dom)
-        #_tm_temp_info = self.get_temp_info(_tm_dom)
-        _tm_rain_info = self.get_rain_info(_tm_dom)
-        _tm_nature_info = self.get_nature_info(_tm_dom)
+            _tm_dom = self.get_tomorrow_dom()
+            _tm_weather_info = self.get_weather_info(_tm_dom)
+            _tm_temp_info = self.get_temp_info(_tm_dom)
+            _tm_rain_info = self.get_rain_info(_tm_dom)
+            _tm_nature_info = self.get_nature_info(_tm_dom)
 
-        self.print_weather_info(_tm_weather_info)
-        #self.print_temp_info(_tm_temp_info)
-        self.print_rain_info(_tm_rain_info)
-        self.print_nature_info(_tm_nature_info)
-        """
+            self.print_weather_info(_tm_weather_info)
+            self.print_temp_info(_tm_temp_info)
+            self.print_rain_info(_tm_rain_info)
+            self.print_nature_info(_tm_nature_info)
 
         return True
 
@@ -155,4 +155,4 @@ class Otenki(object):
 
 if __name__ == '__main__':
     o = Otenki()
-    o.print_otenki()
+    o.print_otenki(tomorrow=True)
