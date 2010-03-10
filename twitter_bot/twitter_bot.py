@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import time
+import random
+
 import twitter
 
 """
@@ -22,11 +24,18 @@ class Bot(object):
         self._password = password
         self._api = twitter.Api(username=self._username, password=self._password)
 
-    def get_follwing_timeline(self):
+    def get_timeline(self, user=None):
+        """
+        ユーザーのタイムラインを取得する
+        """
+        _tweetes = self._api.GetUserTimeline(user)
+        return _tweetes
+
+    def get_follwing_timeline(self, user=None):
         """
         フォローされているユーザーのタイムラインを取得する
         """
-        _tweetes = self._api.GetFriendsTimeline()
+        _tweetes = self._api.GetFriendsTimeline(user)
         _ret_tweetes = []
         for _tweet in _tweetes:
             if self.tweet_is_my_tweet(_tweet) is False:
@@ -180,5 +189,67 @@ class Bot(object):
         else:
             return False
 
+    def post_random_tweet(self, persent=40, time=30, text_list=[]):
+        """
+        ランダムなツイートする。ツイートする頻度もランダム。
+        TODO: ツイートする頻度にパーセントでばらつきをもたせる
+        """
+        _recently_my_tweet = self.get_recently_my_tweet()
+        _random_text = self.get_random_text(text_list)
+        _tweet = None
+        if self.tweet_in_N_minites(_recently_my_tweet, time) == False:
+            _tweet = self.post_tweet(_random_text)
+        return _tweet
+
+    def post_random_retweet(self, tweet, text_list=[]):
+        """
+        ランダムにRTする
+        TODO:引数のならびの検討
+        """
+        _random_text = self.get_random_text(text_list)
+        _tweet = self.post_retweet(_random_text, tweet)
+        return _tweet
+
+    def get_recently_my_tweet(self):
+        """
+        自分の最近のツイートを取得する
+        """
+        _tweetes = self.get_timeline()
+        _ret_tweet = None
+        _create_time = 0
+        for _tweet in _tweetes:
+            if _create_time < _tweet.created_at_in_seconds:
+                _ret_tweet = _tweet
+                _create_time = _tweet.created_at_in_seconds
+        return _ret_tweet
+
+    def get_random_text(self, text_list=[]):
+        """
+        ランダムなテキストを取得する。
+        """
+        if len(text_list) > 0:
+            _text_list = text_list
+        else:
+            _text_list = self.get_text_list()
+        _random_number = random.randrange(0, len(_text_list))
+        _random_text = _text_list[_random_number]
+        return _random_text
+
+    def get_text_list(self):
+        """
+        テキストのリストを取得する。
+        """
+        _text_list = [
+            "おはようございます。",
+            "こんにちは。",
+            "こんばんは。",
+            "私の名前は、%sです。" % (self._username),
+        ]
+        return _text_list
+
 if __name__ == '__main__':
-    pass
+    import baribari_yamete_conf as conf
+
+    #bot = Bot(conf.username, conf.password)
+    #print bot.get_recently_my_tweet().text
+    #print bot.post_random_tweet()
