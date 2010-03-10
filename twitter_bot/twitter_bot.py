@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import time
 import twitter
 
 """
@@ -26,7 +27,22 @@ class Bot(object):
         フォローされているユーザーのタイムラインを取得する
         """
         _tweetes = self._api.GetFriendsTimeline()
-        return _tweetes
+        _ret_tweetes = []
+        for _tweet in _tweetes:
+            if self.tweet_is_my_tweet(_tweet) is False:
+                _ret_tweetes.append(_tweet)
+        return _ret_tweetes
+
+    def get_recently_follwing_timeline(self, time=1):
+        """
+        フォローされているユーザーの最近のタイムラインを取得する
+        """
+        _tweetes = self.get_follwing_timeline()
+        _ret_tweetes = []
+        for _tweet in _tweetes:
+            if self.tweet_in_N_minites(_tweet, time) is True:
+                _ret_tweetes.append(_tweet)
+        return _ret_tweetes
 
     def get_replies(self):
         """
@@ -40,7 +56,7 @@ class Bot(object):
         ツイートする
         """
         _tweet = self._api.PostUpdate(text)
-        print "tweet (%s) at (%s)" % (_tweet.text, _tweet.created_at)
+        print "tweet (%s) at (%s)" % (_tweet.text, time.ctime())
 
         return _tweet
 
@@ -74,7 +90,7 @@ class Bot(object):
         """
         #TODO フォローしているかチェック
         _user = self._api.CreateFriendship(username)
-        print "follow (%s)" % (_user.screen_name)
+        print "follow (%s) at (%s)" % (_user.screen_name, time.ctime())
         return _user
 
     def delete_follow(self, username):
@@ -83,7 +99,7 @@ class Bot(object):
         """
         #TODO フォローしていないかチェック
         _user = self._api.DestroyFriendship(username)
-        print "un follow (%s)" % (_user.screen_name)
+        print "un follow (%s) at (%s)" % (_user.screen_name, time.ctime())
         return _user
 
     def post_refollow(self):
@@ -140,6 +156,29 @@ class Bot(object):
 
         return _not_follower_users
 
+    def tweet_is_my_tweet(self, tweet):
+        """
+        TODO
+        if tweet.is_my() == true:
+        とかしたいんだけど
+        """
+        if tweet.user.screen_name == self._username:
+            return True
+        else:
+            return False
+
+    def tweet_in_N_minites(self, tweet, N=1):
+        """
+        TODO
+        if tweet.in_N_minites() == true:
+        とかしたいんだけど
+        """
+        _create_time = tweet.created_at_in_seconds
+        _now = int(time.time())
+        if (N * 60) >= (_now - _create_time):
+            return True
+        else:
+            return False
 
 if __name__ == '__main__':
     pass
