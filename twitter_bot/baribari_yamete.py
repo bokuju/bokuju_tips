@@ -47,9 +47,14 @@ class BaribariYameteBot(twitter_bot.Bot):
     def get_tweet_list(self):
         _text_list = [
             u"誰もバリバリ言わないお(´・ ω・`)ｼｮﾎﾞｰﾝ",
-            u"支払いは俺に任せろーバリバリ( ﾟωﾟ　)",
-            u"でもこれがポーターの財布だとしたら？ ( ﾟωﾟ　)",
-            u"このセーター マジックテープ式だったんだ　しまむら。。　´・ω・）",
+            u"( ﾟωﾟ　)支払いは俺に任せろーﾊﾞﾘﾊﾞﾘ",
+            u"( ﾟωﾟ　)でもこれがポーターの財布だとしたら？",
+            u"(　ﾟωﾟ )このセーター マジックテープ式だったんだ　しまむら。。",
+            u"お前が払う？",
+            u"( ﾟωﾟ　)クーポンもあるぜーﾍﾟﾘﾍﾘﾟ",
+            u"( ﾟωﾟ　)とどめは携帯クーポンで10％OFFだー！！ﾋﾟﾎﾟﾊﾟﾎ",
+            u"(　ﾟωﾟ )……なんてね この指輪、受け取ってくれるかい？ｷﾗｯ",
+            u"(　ﾟωﾟ )宝石の部分だけ外れるのさーﾊﾞﾘﾊﾞﾘ",
         ]
         return _text_list
 
@@ -57,6 +62,7 @@ class BaribariYameteBot(twitter_bot.Bot):
         _text_list = [
             u"やめて！",
             u"ふしぎ！抱いて！",
+            u"まじでやめて！",
         ]
         return _text_list
 
@@ -90,6 +96,6 @@ if __name__ == '__main__':
         if bot.tweet_search_baribari(tweet.text) is True:
             bot.post_random_retweet(tweet)
         elif bot.tweet_search_makasero(tweet.text) is True:
-            bot.post_retweet(u"バリバリ(ﾟωﾟ)", tweet)
+            bot.post_retweet(u"( ﾟωﾟ　)ﾊﾞﾘﾊﾞﾘ",tweet)
         else:
             pass
