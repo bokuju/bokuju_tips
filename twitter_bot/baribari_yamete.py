@@ -45,9 +45,9 @@ class BaribariYameteBot(twitter_bot.Bot):
         return False
 
 if __name__ == '__main__':
-    from baribari_yamete_conf import username, password
+    import baribari_yamete_conf as conf
 
-    bot = BaribariYameteBot(username, password)
+    bot = BaribariYameteBot(conf.username, conf.password)
 
     bot.post_refollow()
 
