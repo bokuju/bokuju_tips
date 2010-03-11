@@ -7,8 +7,8 @@
 ###
 # Including
 #
-if [ -f $(pwd $0)/.mail_util.sh ]; then
-    source $(pwd $0)/.mail_util.sh
+if [ -f $(dirname $0)/.mail_util.sh ]; then
+    source $(dirname $0)/.mail_util.sh
 fi
 
 ###
@@ -47,12 +47,25 @@ set_main_cf 'smtpd_sasl_auth_enable' 'yes'
 
 set_main_cf 'smtpd_sasl_local_domain' "${new_myhostname}"
 
-set_main_cf 'smtpd_repicipent_restrictions' 'permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination'
+set_main_cf 'smtpd_recipient_restrictions' 'permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination'
 
 set_smtpd_conf 'pwcheck_method' 'saslauthd'
 
 # 受信メールサイズ制限
 set_main_cf 'message_size_limit' '10485760'
+
+# リレーサーバー
+#TODO transportの作成
+#set_main_cf 'transport_maps' 'hash\:\/etc\/postfix\/transport'
+#postmap /etc/postfix/transport #TODO
+
+set_main_cf 'relayhost' '[msagw.biglobe.ne.jp]'
+
+set_main_cf 'smtp_sasl_auth_enable' 'yes'
+set_main_cf 'smtp_sasl_password_maps' 'hash\:\/etc\/postfix\/sasl\_passwd'
+set_main_cf 'smtp_sasl_security_options' 'noanonymous'
+#TODO sasl_passwdの作成
+postmap /etc/postfix/sasl_passwd #TODO
 
 # dovecot基本設定
 set_dovecot_conf 'protocols' 'imap imaps pop3 pop3s'
@@ -65,20 +78,20 @@ set_dovecot_conf 'mail_location' 'maildir\:\~\/Maildir' #TODO: escape
 
 if [ ${ret} -eq 0 ]; then
     remove_backup ${backup_files} 
-    set_auto_start 'sendmail' 'off'
+    set_auto_start_off 'sendmail'
     stop_daemon 'sendmail'
 
-    set_auto_start 'saslauthd' 'on'
+    set_auto_start_on 'saslauthd'
     stop_daemon 'saslauthd'
     start_daemon 'saslauthd'
     make_Maildir
 
-    set_auto_start 'postfix' 'on'
+    set_auto_start_on 'postfix'
     stop_daemon 'postfix'
     start_daemon 'postfix'
     set_mta_is_postfix
 
-    set_auto_start 'dovecot' 'on'
+    set_auto_start_on 'dovecot'
     stop_daemon 'dovecot'
     start_daemon 'dovecot'
 else
