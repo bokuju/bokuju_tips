@@ -189,7 +189,7 @@ class Bot(object):
         else:
             return False
 
-    def post_random_tweet(self, persent=40, time=60, text_list=[]):
+    def post_random_tweet(self, persent=40, time=180, text_list=[]):
         """
         ランダムなツイートする。ツイートする頻度もランダム。
         TODO: ツイートする頻度にパーセントでばらつきをもたせる
