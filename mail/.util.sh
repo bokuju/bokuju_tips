@@ -61,6 +61,8 @@ function make_Maildir(){
     do
         if [ ! -d "/home/${_user}/Maildir" ]; then
             mkdir "/home/${_user}/Maildir"
+            chmod -R 700 "/home/${_user}/Maildir"
+            chown -R ${_user}:${_user} "/home/${_user}/Maildir"
         fi
     done
 
@@ -82,21 +84,40 @@ function check_auto_start(){
     return ${_ret}
 }
 
-function set_auto_start(){
+function set_auto_start_on(){
     # chkconfigをON/OFFする
     local _ret=0
     local _daemon=$1
-    local _action=$2
+
+    check_auto_start ${_daemon}
+    _ret=$?
+    if [ ${_ret} -ne 0 ]; then
+        chkconfig ${_daemon} on
+        _ret=$?
+        if [ ${_ret} -eq 0 ]; then
+            log "${_daemon} auto start on ... ok"
+        else
+            error "${_daemon} auto start on ... failed"
+        fi
+    fi
+
+    return ${_ret}
+}
+
+function set_auto_start_off(){
+    # chkconfigをON/OFFする
+    local _ret=0
+    local _daemon=$1
 
     check_auto_start ${_daemon}
     _ret=$?
     if [ ${_ret} -eq 0 ]; then
-        chkconfig ${_daemon} ${_action} 
+        chkconfig ${_daemon} off
         _ret=$?
         if [ ${_ret} -eq 0 ]; then
-            log "${_daemon} auto start ${_action} ... ok"
+            log "${_daemon} auto start off ... ok"
         else
-            error "${_daemon} auto start ${_action} ... failed"
+            error "${_daemon} auto start off ... failed"
         fi
     fi
 

@@ -7,8 +7,8 @@
 ###
 # Including
 #
-if [ -f $(pwd $0)/.util.sh ]; then
-    source $(pwd $0)/.util.sh
+if [ -f $(dirname $0)/.util.sh ]; then
+    source $(dirname $0)/.util.sh
 fi
 
 ###
