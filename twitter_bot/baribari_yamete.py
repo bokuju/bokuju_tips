@@ -47,14 +47,14 @@ class BaribariYameteBot(twitter_bot.Bot):
     def get_tweet_list(self):
         _text_list = [
             u"誰もバリバリ言わないお(´・ ω・`)ｼｮﾎﾞｰﾝ",
-            u"( ﾟωﾟ　)支払いは俺に任せろーﾊﾞﾘﾊﾞﾘ",
-            u"( ﾟωﾟ　)でもこれがポーターの財布だとしたら？",
-            u"(　ﾟωﾟ )このセーター マジックテープ式だったんだ　しまむら。。",
-            u"お前が払う？",
-            u"( ﾟωﾟ　)クーポンもあるぜーﾍﾟﾘﾍﾘﾟ",
-            u"( ﾟωﾟ　)とどめは携帯クーポンで10％OFFだー！！ﾋﾟﾎﾟﾊﾟﾎ",
-            u"(　ﾟωﾟ )……なんてね この指輪、受け取ってくれるかい？ｷﾗｯ",
-            u"(　ﾟωﾟ )宝石の部分だけ外れるのさーﾊﾞﾘﾊﾞﾘ",
+            #u"( ﾟωﾟ　)支払いは俺に任せろーﾊﾞﾘﾊﾞﾘ",
+            #u"( ﾟωﾟ　)でもこれがポーターの財布だとしたら？",
+            #u"(　ﾟωﾟ )このセーター マジックテープ式だったんだ　しまむら。。",
+            #u"お前が払う？",
+            #u"( ﾟωﾟ　)クーポンもあるぜーﾍﾟﾘﾍﾘﾟ",
+            #u"( ﾟωﾟ　)とどめは携帯クーポンで10％OFFだー！！ﾋﾟﾎﾟﾊﾟﾎ",
+            #u"(　ﾟωﾟ )……なんてね この指輪、受け取ってくれるかい？ｷﾗｯ",
+            #u"(　ﾟωﾟ )宝石の部分だけ外れるのさーﾊﾞﾘﾊﾞﾘ",
         ]
         return _text_list
 
@@ -76,26 +76,30 @@ class BaribariYameteBot(twitter_bot.Bot):
         _tweet = twitter_bot.Bot.post_random_retweet(self, tweet, text_list=_retweet_list)
         return _tweet
         
+    def run(self):
+        self.post_refollow()
+
+        self.delete_refollow()
+
+        self.post_random_tweet()
+
+        #TODO 時間で重複を防いでいるが、もっとウマいやり方あると思う
+        _tweetes = self.get_recently_follwing_timeline()
+        print "get tweetes (%d) at (%s)" % (len(_tweetes), time.ctime())
+
+        _ret_tweet = None
+        for _tweet in _tweetes:
+            if self.tweet_search_baribari(_tweet.text) is True:
+                _ret_tweet = self.post_random_retweet(_tweet)
+            elif self.tweet_search_makasero(_tweet.text) is True:
+                _ret_tweet = self.post_retweet(u"ﾊﾞﾘﾊﾞﾘ", _tweet)
+            else:
+                pass
+        return _ret_tweet
 
 if __name__ == '__main__':
     import baribari_yamete_conf as conf
 
     bot = BaribariYameteBot(conf.username, conf.password)
+    bot.run()
 
-    bot.post_refollow()
-
-    bot.delete_refollow()
-
-    bot.post_random_tweet()
-
-    #TODO 時間で重複を防いでいるが、もっとウマいやり方あると思う
-    tweetes = bot.get_recently_follwing_timeline()
-    print "get tweetes (%d) at (%s)" % (len(tweetes), time.ctime())
-
-    for tweet in tweetes:
-        if bot.tweet_search_baribari(tweet.text) is True:
-            bot.post_random_retweet(tweet)
-        elif bot.tweet_search_makasero(tweet.text) is True:
-            bot.post_retweet(u"( ﾟωﾟ　)ﾊﾞﾘﾊﾞﾘ",tweet)
-        else:
-            pass
