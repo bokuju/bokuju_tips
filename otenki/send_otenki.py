@@ -66,11 +66,7 @@ if __name__ == '__main__':
 
     from_addr = conf.mail_from
     to_addr = conf.rcpt_to
-    body = u"""\
-- 気温 -
-最高 : %(high)s
-最低 : %(low)s
-""" % _td_temp_info
+    body = ""
     body += u"""\
 - 降水確率 -
 """
@@ -78,7 +74,11 @@ if __name__ == '__main__':
         body += u"""\
 %(time)-5s : %(probability)-3s
 """ % _td_rain_info[_n]
-
+    body += u"""\
+- 気温 -
+最高 : %(high)s
+最低 : %(low)s
+""" % _td_temp_info
     body += u"""\
 - その他 -
 風 : %(wind)s
